@@ -19,15 +19,7 @@ ACCESS_TOKEN = "AAACEdEose0cBAONOmWh7pSwGUQXA05GwABy4nlhiwJi6XSG9YOFr7L9xaJUVZCm
 def flatten(l):
     return list(itertools.chain(*l))
 
-@route('/')
-def index_page():
-    graph = facebook.GraphAPI(ACCESS_TOKEN)
-    profile = graph.get_object("me")
-    likes = graph.get_connections("me", "likes") 
-    formatted = pprint.pformat(likes)
-
-    names_array = [like["name"] for like in likes["data"]]
-
+def grab_popular_tweet(names_array):
     def try_encode(name):
         try:
             return ["http://search.twitter.com/search.json?" + urllib.urlencode({"q": name, "result_type": "popular"})]
@@ -49,9 +41,26 @@ def index_page():
     useful_array = [(t["metadata"]["recent_retweets"], t["text"]) for t in all_tweets]
     sorted_tweets = sorted(useful_array, key=lambda x: x[0])
 
-    graph.put_wall_post("test message:" + sorted_tweets[0][1])
+    if not sorted_tweets:
+        return []
+    return sorted_tweets[0][1]
 
-    return sorted_tweets.join('<br>')
+
+@route('/')
+def index_page():
+    graph = facebook.GraphAPI(ACCESS_TOKEN)
+    profile = graph.get_object("me")
+    likes = graph.get_connections("me", "likes") 
+    formatted = pprint.pformat(likes)
+
+    names_array = [like["name"] for like in likes["data"]]
+
+    chunks=[names_array[x:x+100] for x in xrange(0, len(data), 100)]
+    for chunk in chunks:
+        tweet_maybe = grab_popular_tweet(chunk)
+        if tweet_maybe:
+            graph.put_wall_post("test message:" + tweet_maybe)
+            return '<br>'.join(chunk)
 
 @route('/callback/')
 def callback_page():
