@@ -41,6 +41,8 @@ def grab_popular_tweet(names_array):
     useful_array = [(t["metadata"]["recent_retweets"], t["text"]) for t in all_tweets]
     sorted_tweets = sorted(useful_array, key=lambda x: x[0])
 
+    print len(sorted_tweets)
+
     if not sorted_tweets:
         return []
     return sorted_tweets[0][1]
@@ -55,11 +57,11 @@ def index_page():
 
     names_array = [like["name"] for like in likes["data"]]
 
-    chunks=[names_array[x:x+100] for x in xrange(0, len(data), 100)]
+    chunks=[names_array[x:x+5] for x in xrange(0, len(names_array), 5)]
     for chunk in chunks:
         tweet_maybe = grab_popular_tweet(chunk)
         if tweet_maybe:
-            graph.put_wall_post("test message:" + tweet_maybe)
+            graph.put_wall_post("test message:" + tweet_maybe + datetime.time(datetime.now()))
             return '<br>'.join(chunk)
 
 @route('/callback/')
