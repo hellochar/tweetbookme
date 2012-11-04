@@ -6,6 +6,7 @@ import urllib2
 import json
 import urllib
 import itertools
+from datetime import datetime
 
 APP_ID = "125942107559245"
 APP_SECRET = "b662899fe149bd0e552fd9a1f12b157f"
@@ -13,7 +14,7 @@ APP_SECRET = "b662899fe149bd0e552fd9a1f12b157f"
 HOST = ""
 TOKEN_STORE = {}
 cookies = {}
-ACCESS_TOKEN = "AAACEdEose0cBAONOmWh7pSwGUQXA05GwABy4nlhiwJi6XSG9YOFr7L9xaJUVZCmZBMB0Ou5kWVB4kfJcRW0jNaEA74bn2YuZAhegF2s5gZDZD"
+ACCESS_TOKEN = "AAACEdEose0cBAIzJ8HHWiMWZBOTVhHNIQrTQ1zih9dowIvKEDISKdjtzC57gITXkquE3yxv8g0C3JNPH897eLlhEecVf1lghrERRacAZDZD"
 
 
 def flatten(l):
@@ -61,7 +62,7 @@ def index_page():
     for chunk in chunks:
         tweet_maybe = grab_popular_tweet(chunk)
         if tweet_maybe:
-            graph.put_wall_post("test message:" + tweet_maybe + datetime.time(datetime.now()))
+            graph.put_wall_post("test message:" + tweet_maybe + strftime("%Y-%m-%d %H:%M:%S", gmtime()))
             return '<br>'.join(chunk)
 
 @route('/callback/')
