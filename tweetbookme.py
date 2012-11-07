@@ -14,7 +14,7 @@ APP_SECRET = "b662899fe149bd0e552fd9a1f12b157f"
 HOST = ""
 TOKEN_STORE = {}
 cookies = {}
-ACCESS_TOKEN = "AAACEdEose0cBAIzJ8HHWiMWZBOTVhHNIQrTQ1zih9dowIvKEDISKdjtzC57gITXkquE3yxv8g0C3JNPH897eLlhEecVf1lghrERRacAZDZD"
+ACCESS_TOKEN = "AAACEdEose0cBAG11n5ZCFnGBMR3nbLDXZAwZBVH8vXnJEPKcvWnZC2wNGYxZBw2fZAR1OFvsCMUnd6UVdNhzP4nuJonIiBsbqQ34MzwdizKwZDZD"
 
 
 def flatten(l):
@@ -53,10 +53,12 @@ def grab_popular_tweet(names_array):
 def index_page():
     graph = facebook.GraphAPI(ACCESS_TOKEN)
     profile = graph.get_object("me")
-    likes = graph.get_connections("me", "likes") 
+    likes = graph.get_connections("me", "likes")
     formatted = pprint.pformat(likes)
 
     names_array = [like["name"] for like in likes["data"]]
+    import random
+    random.shuffle(names_array)
 
     chunks=[names_array[x:x+5] for x in xrange(0, len(names_array), 5)]
     for chunk in chunks:
